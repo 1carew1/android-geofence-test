@@ -2,8 +2,10 @@ package com.example.colmcarew.geofencetracking;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
@@ -16,17 +18,21 @@ import java.util.List;
 
 public class GeofenceService extends IntentService {
     private static final String TAG = "GeoSer";
-    /**
-     * Creates an IntentService.  Invoked by your subclass's constructor.
-     *
-     * @param name Used to name the worker thread, important only for debugging.
-     */
+
     public GeofenceService(String name) {
         super(name);
     }
     public GeofenceService() {
         super(TAG);  // use TAG to name the IntentService worker thread
     }
+    private Handler mHandler;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mHandler = new Handler();
+    }
+
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
@@ -40,8 +46,20 @@ public class GeofenceService extends IntentService {
             String requedId = geofence.getRequestId();
             if(transition == Geofence.GEOFENCE_TRANSITION_ENTER){
                 Log.w(TAG, "Entering Geofence - " + requedId);
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(GeofenceService.this, "Entering", Toast.LENGTH_SHORT).show();
+                    }
+                });
             } else  if(transition == Geofence.GEOFENCE_TRANSITION_EXIT) {
                 Log.w(TAG, "Exiting Geofence - " + requedId);
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(GeofenceService.this, "Exiting", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         }
     }
