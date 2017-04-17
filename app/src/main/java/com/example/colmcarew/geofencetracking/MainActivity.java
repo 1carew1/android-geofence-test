@@ -1,5 +1,7 @@
 package com.example.colmcarew.geofencetracking;
 
+import android.Manifest;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -43,6 +45,13 @@ public class MainActivity extends AppCompatActivity {
                 stopGeofenceMonitoring();
             }
         });
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION},
+                    1234);
+        }
+
     }
 
     private void startLocationMonitoring() {
