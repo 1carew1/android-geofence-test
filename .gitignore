@@ -1,0 +1,60 @@
+googleAPIKey.txt
+ 
+app/src/debug/res/values/google_maps_api.xml
+app/src/release/res/values/google_maps_api.xml
+
+google-services.json
+
+*.iml
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+
+### Eclipse ###
+.classpath
+.project
+.settings/
+
+.slcache
+
+## Directory-based project format:
+.idea/
+
+## File-based project format:
+*.ipr
+*.iws
+
+## Plugin-specific files:
+
+# IntelliJ
+/out/
+
+# mpeltonen/sbt-idea plugin
+.idea_modules/
+
+# JIRA plugin
+atlassian*
+
+# Gradle
+.gradle
+
+# Web related
+build
+web-app/WEB-INF/classes
+target
+
+# Crashlytics plugin (for Android Studio and IntelliJ)
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+
+# Misc
+temp
+
+# Database Dumps
+*.dump
