@@ -3,6 +3,8 @@ package com.example.colmcarew.geofencetracking;
 import android.Manifest;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -13,11 +15,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private Button startLocationMonitoring;
     private Button startGeofenceMonitoring;
     private Button stopGeofenceMonitoring;
+
+    private GoogleApiClient googleApiClient = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +59,29 @@ public class MainActivity extends AppCompatActivity {
                             Manifest.permission.ACCESS_COARSE_LOCATION},
                     1234);
         }
+
+        //Setup the Api client
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                    @Override
+                    public void onConnected(@Nullable Bundle bundle) {
+                        Log.w(TAG, "connected to GoogleApi client");
+                    }
+
+                    @Override
+                    public void onConnectionSuspended(int i) {
+                        Log.w(TAG, "suspended to GoogleApi client");
+                    }
+                })
+                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                        Log.w(TAG, "failed to GoogleApi client");
+
+                    }
+                })
+                .build();
 
     }
 
