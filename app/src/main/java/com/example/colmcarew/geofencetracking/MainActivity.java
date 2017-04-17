@@ -1,6 +1,8 @@
 package com.example.colmcarew.geofencetracking;
 
 import android.Manifest;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -20,6 +22,10 @@ import android.widget.Button;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -107,10 +113,10 @@ public class MainActivity extends AppCompatActivity {
         Log.w(TAG, "Starting Location Monitoring");
         try {
             LocationRequest locationRequest = LocationRequest.create()
-                    .setInterval(0)
-                    .setFastestInterval(0)
+                    .setInterval(2000)
+                    .setFastestInterval(1000)
                     .setSmallestDisplacement(0)
-                    .setMaxWaitTime(0)
+                    .setMaxWaitTime(2000)
                     .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -133,6 +139,46 @@ public class MainActivity extends AppCompatActivity {
 
     private void startGeofencMonitroing() {
         Log.w(TAG, "Starting Geofence Monitoring");
+        try {
+            Geofence geofence = new Geofence.Builder()
+                    .setRequestId("GEO-1")
+                    .setCircularRegion(33, -84, 100)
+                    .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                    .setNotificationResponsiveness(1000)
+                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
+                    .build();
+
+            GeofencingRequest geofencingRequest = new GeofencingRequest.Builder()
+                    .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+                    .addGeofence(geofence)
+                    .build();
+
+            Intent intent = new Intent(this, GeofenceService.class);
+            PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            if (!googleApiClient.isConnected()) {
+                Log.w(TAG, "Google API Not Connected");
+            } else {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // do nothing
+                } else {
+                    LocationServices.GeofencingApi.addGeofences(googleApiClient, geofencingRequest, pendingIntent)
+                            .setResultCallback(new ResultCallback<Status>() {
+                                @Override
+                                public void onResult(@NonNull Status status) {
+                                    if (status.isSuccess()) {
+                                        Log.w(TAG, "Successfully Added Geofence");
+                                    } else {
+                                        Log.w(TAG, "Error added geofence");
+                                    }
+                                }
+                            });
+                }
+
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error", e);
+        }
 
     }
 
