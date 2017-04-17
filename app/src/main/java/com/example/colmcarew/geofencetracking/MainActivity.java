@@ -30,6 +30,8 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private Button startLocationMonitoring;
@@ -184,7 +186,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void stopGeofenceMonitoring() {
         Log.w(TAG, "Stopping Geofence Monitoring");
-
+        ArrayList<String> geofenceIds = new ArrayList<>();
+        geofenceIds.add("GEO-1");
+        LocationServices.GeofencingApi.removeGeofences(googleApiClient, geofenceIds);
     }
 
     @Override
